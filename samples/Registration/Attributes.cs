@@ -1,0 +1,115 @@
+using System;
+
+// Draft of the source-only package content. It compiles into the plugin assembly, so it must
+// stay C# 7.3 / .NET Framework compatible and take no dependencies. Everything is internal:
+// the tool matches these attributes by full name, not by assembly identity.
+namespace DeclarativePluginRegistration
+{
+	internal enum Stage
+	{
+		PreValidation = 10,
+		PreOperation = 20,
+		PostOperation = 40,
+	}
+
+	internal enum Mode
+	{
+		Synchronous = 0,
+		Asynchronous = 1,
+	}
+
+	internal enum ImageType
+	{
+		PreImage = 0,
+		PostImage = 1,
+		Both = 2,
+	}
+
+	/// <summary>
+	/// Common message names. Any message name, including custom APIs, can be passed as a string.
+	/// </summary>
+	internal static class Message
+	{
+		internal const string Create = "Create";
+		internal const string Update = "Update";
+		internal const string Delete = "Delete";
+		internal const string Retrieve = "Retrieve";
+		internal const string RetrieveMultiple = "RetrieveMultiple";
+		internal const string Associate = "Associate";
+		internal const string Disassociate = "Disassociate";
+		internal const string Assign = "Assign";
+		internal const string SetState = "SetState";
+		internal const string SetStateDynamicEntity = "SetStateDynamicEntity";
+	}
+
+	/// <summary>
+	/// Registers the class for one SDK message processing step. Repeat for multiple steps.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+	internal sealed class PluginStepAttribute : Attribute
+	{
+		/// <summary>Step on an entity, by logical name.</summary>
+		public PluginStepAttribute(string message, string entity, Stage stage)
+		{
+			Message = message;
+			Entity = entity;
+			Stage = stage;
+		}
+
+		/// <summary>Step on an early-bound entity type. The tool reads its EntityLogicalName.</summary>
+		public PluginStepAttribute(string message, Type entity, Stage stage)
+		{
+			Message = message;
+			EntityType = entity;
+			Stage = stage;
+		}
+
+		/// <summary>Step with no primary entity, e.g. Associate / Disassociate or a global custom API.</summary>
+		public PluginStepAttribute(string message, Stage stage)
+		{
+			Message = message;
+			Stage = stage;
+		}
+
+		public string Message { get; }
+		public string Entity { get; }
+		public Type EntityType { get; }
+		public Stage Stage { get; }
+		public Mode Mode { get; set; } = Mode.Synchronous;
+		public int Order { get; set; } = 1;
+
+		/// <summary>Update only. Null runs on any attribute change.</summary>
+		public string[] FilteringAttributes { get; set; }
+
+		/// <summary>Pins the step to an existing registration. Otherwise matched by its generated name.</summary>
+		public string Id { get; set; }
+
+		/// <summary>Only needed when the class has two steps for the same message.</summary>
+		public string Key { get; set; }
+	}
+
+	/// <summary>
+	/// Registers an entity image on the class's step for <see cref="Message"/>.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+	internal sealed class PluginImageAttribute : Attribute
+	{
+		/// <summary>Image with the listed attributes. No attributes means all columns.</summary>
+		public PluginImageAttribute(string message, ImageType type, params string[] attributes)
+		{
+			Message = message;
+			Type = type;
+			Attributes = attributes;
+		}
+
+		public string Message { get; }
+		public ImageType Type { get; }
+		public string[] Attributes { get; }
+
+		/// <summary>Defaults to "preImage" / "postImage".</summary>
+		public string Alias { get; set; }
+
+		/// <summary>The step's Key, when the class has two steps for the same message.</summary>
+		public string Step { get; set; }
+	}
+}
