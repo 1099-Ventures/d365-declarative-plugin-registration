@@ -1,4 +1,4 @@
-using DeclarativePluginRegistration;
+using Ten99.D365.PluginRegistration;
 
 // Early-bound project: the entity is a type, and attribute names come from the generated Fields class.
 namespace Samples.EarlyBound

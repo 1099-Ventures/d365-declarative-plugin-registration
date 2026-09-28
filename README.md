@@ -2,7 +2,7 @@
 
 Register Dataverse plugin steps and images from attributes on the plugin classes themselves, and apply that registration from the command line or a pipeline, on any OS.
 
-> **Status: early design.** The attribute shape is being settled in [`samples/Registration`](samples/Registration). The CLI does not exist yet. Names, including the namespace and package name, may still change.
+> **Status: alpha.** `plan` and `export` have been used against a real environment. `apply` is unit tested but not yet proven in one. Expect breaking changes before 1.0.
 
 ## Why
 
@@ -40,32 +40,68 @@ Rules of thumb:
 - One `PluginStep` per step. Messages without a primary entity (Associate, Disassociate, global custom APIs) omit the entity.
 - A `PluginImage` binds to the class's step for the same message. If the class has two steps for one message, give the step a `Key` and the image a matching `Step`.
 - An image with no attributes listed includes all columns.
-- `Id` pins a step to an existing registration, so steps registered by hand can be adopted without being recreated.
+- `Id` pins a step to an existing registration, so steps registered by hand can be adopted without being recreated. A new step with an `Id` is created with that Id, so it's the same in every environment.
+- `Name` overrides the step name, which otherwise defaults to `Namespace.Class: Message of entity`, the way the Plugin Registration Tool names steps.
 
 The tool rejects declarations that can't work, such as a pre-image on Create, a post-image on a pre-operation step, or an image with no matching step.
 
 ## How the attributes are shipped
 
-Dataverse runs plugins in a sandbox, and every assembly a plugin references has to be deployed with it. To avoid adding a dependency, the attributes ship as a **source-only** NuGet package. The classes are `internal` and compile into your plugin assembly. The tool matches them by name and never loads your assembly, so it can inspect a .NET Framework plugin assembly from .NET on Linux.
+Dataverse runs plugins in a sandbox, and every assembly a plugin references has to be deployed with it. To avoid adding a dependency, the attributes ship as a **source-only** NuGet package, in the `Ten99.D365.PluginRegistration` namespace. The classes are `internal` and compile into your plugin assembly. The tool matches them by name and never loads your assembly, so it can inspect a .NET Framework plugin assembly from .NET on Linux.
 
 The attribute source targets C# 7.3 so that it builds in classic .NET Framework plugin projects.
 
-## Planned CLI
+## Installing
+
+Add the attributes to the plugin project. The project must use `PackageReference`, since `packages.config` doesn't support source-only packages:
+
+```xml
+<PackageReference Include="Ten99.D365.PluginRegistration" Version="0.1.0-alpha" PrivateAssets="all" />
+```
+
+Install the CLI:
+
+```bash
+dotnet tool install --global Ten99.D365.PluginRegistration.Tool --prerelease
+```
+
+## Using the CLI
 
 | Command | Purpose |
 | --- | --- |
-| `plan` | Compare the assembly's declarations with the environment and print the changes |
-| `apply` | Upload the assembly and create or update plugin types, steps and images. `--prune` removes undeclared steps. `--solution` adds components to a solution |
-| `export` | Read existing registrations from an environment and print them as attributes, to adopt an existing project |
+| `d365-plugin-reg plan` | Compare the assembly's declarations with the environment and print the changes. `--detailed-exitcode` exits with 2 when there are changes |
+| `d365-plugin-reg apply` | Make the environment match: upload the assembly, then create or update plugin types, steps and images. `--solution` adds the assembly and steps to an unmanaged solution |
+| `d365-plugin-reg export` | Print the current registrations of an assembly as attributes, to adopt a project whose steps were registered by hand |
 
-Authentication will support interactive login for local use and workload identity federation for pipelines, so no client secrets are needed.
-
-## Building the samples
+`plan` and `apply` take `--assembly` (the built plugin DLL, with its references in the same folder) and `--environment`. Steps that are registered but not declared are reported and left alone, unless `--prune` is given.
 
 ```bash
-cd samples/Registration
-dotnet build
+d365-plugin-reg export -n Contoso.Plugins -e https://contoso-dev.crm.dynamics.com -o registrations.cs
+d365-plugin-reg plan -a bin/Release/Contoso.Plugins.dll -e https://contoso-dev.crm.dynamics.com
+d365-plugin-reg apply -a bin/Release/Contoso.Plugins.dll -e https://contoso-dev.crm.dynamics.com --solution "Contoso Plugins"
 ```
+
+### Adopting an existing project
+
+1. `export` the current registrations and paste each block onto its class. Every step keeps its Id.
+2. `plan` until it shows no step changes. Anything it still reports is a difference between the code and the environment worth looking at.
+3. From then on, change registrations in code and `apply`.
+
+### Authentication
+
+`--auth` selects how to sign in. Pass `--tenant` when your account's home tenant isn't the environment's tenant.
+
+- `Interactive` (default): a browser sign-in, for local use.
+- `DeviceCode`: sign in on another device, for terminals without a browser.
+- `AzureCli`: the Azure CLI's signed-in identity. In Azure DevOps, run the tool inside an `AzureCLI@2` task whose service connection uses workload identity federation, so the pipeline holds no secrets. The identity must be an application user in the environment with rights to register plugins.
+
+## Building
+
+```bash
+dotnet test
+```
+
+The tests run on Microsoft.Testing.Platform. They build a .NET Framework fixture assembly against the real Dataverse SDK and read it back with the tool.
 
 ## Contributing
 

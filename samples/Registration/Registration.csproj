@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Design sample: registration attributes in late-bound and early-bound plugin projects.
+	<!-- Samples: registration attributes in late-bound and early-bound plugin projects.
 	     LangVersion 7.3 proves the attribute source compiles for .NET Framework plugin projects. -->
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -8,5 +8,10 @@
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Consumers get this file from the source package. The samples link it directly. -->
+		<Compile Include="../../src/Ten99.D365.PluginRegistration/Attributes.cs" Link="Ten99.D365.PluginRegistration/Attributes.cs" />
+	</ItemGroup>
 
 </Project>

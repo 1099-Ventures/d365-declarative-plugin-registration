@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Registration/Registration.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Ten99.D365.PluginRegistration.Tool/Ten99.D365.PluginRegistration.Tool.csproj" />
+    <Project Path="src/Ten99.D365.PluginRegistration/Ten99.D365.PluginRegistration.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ten99.D365.PluginRegistration.Fixtures/Ten99.D365.PluginRegistration.Fixtures.csproj" />
+    <Project Path="tests/Ten99.D365.PluginRegistration.Tool.Tests/Ten99.D365.PluginRegistration.Tool.Tests.csproj" />
+  </Folder>
+</Solution>

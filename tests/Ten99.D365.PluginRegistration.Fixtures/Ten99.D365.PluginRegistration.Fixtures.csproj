@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- A .NET Framework plugin assembly for the tool's tests, compiled against the real Dataverse SDK
+	     and the packaged attribute source, like a consuming plugin project. -->
+	<PropertyGroup>
+		<TargetFramework>net462</TargetFramework>
+		<LangVersion>7.3</LangVersion>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<!-- Plugin projects ship their references alongside, which the tool resolves from -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.60" />
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="../../src/Ten99.D365.PluginRegistration/Attributes.cs" Link="Ten99.D365.PluginRegistration/Attributes.cs" />
+	</ItemGroup>
+
+</Project>
