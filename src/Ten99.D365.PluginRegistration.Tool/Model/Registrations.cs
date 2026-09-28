@@ -23,6 +23,7 @@ public sealed record CurrentStep(
 	Mode Mode,
 	int Order,
 	IReadOnlyList<string>? FilteringAttributes,
-	IReadOnlyList<CurrentImage> Images);
+	IReadOnlyList<CurrentImage> Images,
+	bool IsManaged = false);
 
 public sealed record CurrentImage(Guid Id, ImageType Type, string Alias, string Name, IReadOnlyList<string>? Attributes);

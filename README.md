@@ -71,6 +71,7 @@ dotnet tool install --global Ten99.D365.PluginRegistration.Tool --prerelease
 | --- | --- |
 | `d365-plugin-reg plan` | Compare the assembly's declarations with the environment and print the changes. `--detailed-exitcode` exits with 2 when there are changes |
 | `d365-plugin-reg apply` | Make the environment match: upload the assembly, then create or update plugin types, steps and images. `--solution` adds the assembly and steps to an unmanaged solution |
+| `d365-plugin-reg prune` | Delete registered steps the assembly no longer declares, and nothing else. For environments that get the assembly through solutions. Managed steps are refused. `--what-if` lists them without deleting |
 | `d365-plugin-reg export` | Print the current registrations of an assembly as attributes, to adopt a project whose steps were registered by hand |
 
 `plan` and `apply` take `--assembly` (the built plugin DLL, with its references in the same folder) and `--environment`. Steps that are registered but not declared are reported and left alone, unless `--prune` is given.

@@ -59,7 +59,7 @@ public sealed class RegistrationReader(IOrganizationServiceAsync2 service)
 	{
 		var query = new QueryExpression("sdkmessageprocessingstep")
 		{
-			ColumnSet = new ColumnSet("sdkmessageprocessingstepid", "name", "stage", "mode", "rank", "filteringattributes", "plugintypeid"),
+			ColumnSet = new ColumnSet("sdkmessageprocessingstepid", "name", "stage", "mode", "rank", "filteringattributes", "plugintypeid", "ismanaged"),
 			Criteria = { Conditions = { new ConditionExpression("plugintypeid", ConditionOperator.In, typeIds.Cast<object>().ToArray()) } },
 		};
 
@@ -91,7 +91,8 @@ public sealed class RegistrationReader(IOrganizationServiceAsync2 service)
 				(Mode)e.GetAttributeValue<OptionSetValue>("mode").Value,
 				e.GetAttributeValue<int>("rank"),
 				SplitAttributes(e.GetAttributeValue<string>("filteringattributes")),
-				images.TryGetValue(e.Id, out var stepImages) ? stepImages : []);
+				images.TryGetValue(e.Id, out var stepImages) ? stepImages : [],
+				e.GetAttributeValue<bool>("ismanaged"));
 		}).ToList();
 	}
 
