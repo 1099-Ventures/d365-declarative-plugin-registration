@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="xunit.v3" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../../src/Ten99.D365.PluginRegistration.Tool/Ten99.D365.PluginRegistration.Tool.csproj" />
+
+		<!-- Build order only: the tests read the fixture's compiled assembly from disk -->
+		<ProjectReference Include="../Ten99.D365.PluginRegistration.Fixtures/Ten99.D365.PluginRegistration.Fixtures.csproj"
+			ReferenceOutputAssembly="false"
+			SkipGetTargetFrameworkProperties="true"
+			SetTargetFramework="TargetFramework=net462" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>FixtureAssembly</_Parameter1>
+			<_Parameter2>$(MSBuildThisFileDirectory)../Ten99.D365.PluginRegistration.Fixtures/bin/$(Configuration)/net462/Ten99.D365.PluginRegistration.Fixtures.dll</_Parameter2>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+</Project>
