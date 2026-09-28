@@ -2,7 +2,7 @@
 
 Register Dataverse plugin steps and images from attributes on the plugin classes themselves, and apply that registration from the command line or a pipeline, on any OS.
 
-> **Status: alpha.** `plan` and `export` have been used against a real environment. `apply` is unit tested but not yet proven in one. Expect breaking changes before 1.0.
+> **Status: alpha.** `plan`, `apply` and `export` are in use against a real environment, with `apply` running from an Azure DevOps pipeline. Expect breaking changes before 1.0.
 
 ## Why
 
@@ -86,6 +86,27 @@ d365-plugin-reg apply -a bin/Release/Contoso.Plugins.dll -e https://contoso-dev.
 1. `export` the current registrations and paste each block onto its class. Every step keeps its Id.
 2. `plan` until it shows no step changes. Anything it still reports is a difference between the code and the environment worth looking at.
 3. From then on, change registrations in code and `apply`.
+
+### In an Azure DevOps pipeline
+
+Build the plugin project, then run `apply` inside an `AzureCLI@2` task so the tool picks up the service connection's identity:
+
+```yaml
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'YourServiceConnection'   # workload identity federation
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      d365-plugin-reg apply \
+        --assembly "$(Pipeline.Workspace)/plugins/Contoso.Plugins.dll" \
+        --environment "$(DataverseUrl)" \
+        --tenant "$(TenantId)" \
+        --auth AzureCli \
+        --solution "$(SolutionName)"
+```
+
+The service connection's app must be an application user in the environment with a role that can register plugins.
 
 ### Authentication
 
