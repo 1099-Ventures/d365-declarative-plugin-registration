@@ -1,5 +1,7 @@
 using System.CommandLine;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Ten99.D365.PluginRegistration.Tool.Dataverse;
+using Ten99.D365.PluginRegistration.Tool.Model;
 using Ten99.D365.PluginRegistration.Tool.Planning;
 using Ten99.D365.PluginRegistration.Tool.Reading;
 
@@ -34,7 +36,7 @@ internal static class PlanCommand
 	}
 
 	/// <summary>Reads the assembly and the environment, then prints the plan. Null when the declarations are invalid.</summary>
-	internal static async Task<(Plan Plan, Microsoft.PowerPlatform.Dataverse.Client.ServiceClient Client)?> BuildPlanAsync(
+	internal static async Task<(Plan Plan, CurrentState Current, ServiceClient Client)?> BuildPlanAsync(
 		ParseResult parseResult, CommonOptions options, CancellationToken cancellationToken)
 	{
 		var errors = new List<string>();
@@ -59,6 +61,6 @@ internal static class PlanCommand
 		var plan = Planner.Create(declared, current, parseResult.GetValue(options.Prune));
 
 		PlanPrinter.Print(plan, environment, Console.Out);
-		return (plan, client);
+		return (plan, current, client);
 	}
 }
