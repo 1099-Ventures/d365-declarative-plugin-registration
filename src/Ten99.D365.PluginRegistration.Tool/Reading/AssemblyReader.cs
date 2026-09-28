@@ -121,7 +121,8 @@ public static class AssemblyReader
 			named.TryGetValue("Order", out var order) ? (int)order! : 1,
 			named.TryGetValue("FilteringAttributes", out var filtering) ? ReadStrings(filtering) : null,
 			named.TryGetValue("Id", out var id) ? (string?)id : null,
-			named.TryGetValue("Key", out var key) ? (string?)key : null);
+			named.TryGetValue("Key", out var key) ? (string?)key : null,
+			named.TryGetValue("Name", out var stepName) ? (string?)stepName : null);
 	}
 
 	private static RawImage ReadImage(CustomAttributeData data)

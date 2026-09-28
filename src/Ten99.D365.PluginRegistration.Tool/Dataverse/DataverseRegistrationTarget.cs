@@ -72,7 +72,9 @@ public sealed class DataverseRegistrationTarget(IOrganizationServiceAsync2 servi
 
 	public Task UpdateImageAsync(Guid id, DeclaredStep step, DeclaredImage image, CancellationToken cancellationToken)
 	{
+		//	Leave an existing image's name alone. Only the alias matters to the plugin.
 		var entity = ImageEntity(step, image);
+		entity.Attributes.Remove("name");
 		entity.Id = id;
 		return service.UpdateAsync(entity, cancellationToken);
 	}

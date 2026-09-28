@@ -5,6 +5,7 @@ var root = new RootCommand("Registers Dataverse plugin steps and images declared
 {
 	PlanCommand.Create(),
 	ApplyCommand.Create(),
+	ExportCommand.Create(),
 };
 
 return await root.Parse(args).InvokeAsync();

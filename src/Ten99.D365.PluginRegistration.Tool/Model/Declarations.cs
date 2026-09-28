@@ -42,10 +42,14 @@ public sealed record DeclaredStep(
 	IReadOnlyList<string>? FilteringAttributes,
 	Guid? Id,
 	string? Key,
-	IReadOnlyList<DeclaredImage> Images)
+	IReadOnlyList<DeclaredImage> Images,
+	string? ExplicitName = null)
 {
-	/// <summary>Plugin Registration Tool style name, so adopted steps keep familiar names.</summary>
-	public string Name => $"{TypeName}: {Message} of {Entity ?? "any Entity"}{(Key is null ? "" : $" ({Key})")}";
+	/// <summary>The declared name, or a Plugin Registration Tool style name.</summary>
+	public string Name => ExplicitName ?? DefaultName(TypeName, Message, Entity, Key);
+
+	public static string DefaultName(string typeName, string message, string? entity, string? key) =>
+		$"{typeName}: {message} of {entity ?? "any Entity"}{(key is null ? "" : $" ({key})")}";
 
 	public string Describe() => $"{Name} [{Stage}, {Mode}]";
 }
@@ -64,7 +68,8 @@ public sealed record RawStep(
 	int Order,
 	IReadOnlyList<string>? FilteringAttributes,
 	string? Id,
-	string? Key);
+	string? Key,
+	string? Name = null);
 
 /// <summary>An image attribute as read from metadata.</summary>
 public sealed record RawImage(string Message, ImageType Type, IReadOnlyList<string>? Attributes, string? Alias, string? Step);

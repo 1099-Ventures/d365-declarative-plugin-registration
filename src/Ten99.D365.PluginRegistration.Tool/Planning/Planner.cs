@@ -197,9 +197,9 @@ public static class Planner
 
 			unmatched.Remove(match);
 
+			//	Image names carry no meaning, so only the alias the plugin reads by is compared
 			var details = new List<string>();
 			AddIfDifferent(details, "alias", match.Alias, image.Alias);
-			AddIfDifferent(details, "name", match.Name, image.Name);
 			if (!SameSet(match.Attributes, image.Attributes))
 			{
 				details.Add($"attributes: {Format(match.Attributes)} -> {Format(image.Attributes)}");

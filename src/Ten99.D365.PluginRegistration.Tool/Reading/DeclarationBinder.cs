@@ -53,7 +53,8 @@ public static class DeclarationBinder
 			Normalise(s.FilteringAttributes),
 			ParseId(typeName, s, errors),
 			s.Key,
-			images[i])).ToList();
+			images[i],
+			string.IsNullOrWhiteSpace(s.Name) ? null : s.Name)).ToList();
 
 		foreach (var step in steps)
 		{

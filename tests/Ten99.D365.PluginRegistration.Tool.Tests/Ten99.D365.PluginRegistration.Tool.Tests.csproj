@@ -9,6 +9,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="xunit.v3" Version="4.0.1" />
+		<!-- Compiles exported attributes in the round-trip test -->
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,6 +31,15 @@
 		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
 			<_Parameter1>FixtureAssembly</_Parameter1>
 			<_Parameter2>$(MSBuildThisFileDirectory)../Ten99.D365.PluginRegistration.Fixtures/bin/$(Configuration)/net462/Ten99.D365.PluginRegistration.Fixtures.dll</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>AttributeSource</_Parameter1>
+			<_Parameter2>$(MSBuildThisFileDirectory)../../src/Ten99.D365.PluginRegistration/Attributes.cs</_Parameter2>
+		</AssemblyAttribute>
+		<!-- Restored by the fixture project -->
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>Net462ReferenceAssemblies</_Parameter1>
+			<_Parameter2>$(NuGetPackageRoot)microsoft.netframework.referenceassemblies.net462/1.0.3/build/.NETFramework/v4.6.2</_Parameter2>
 		</AssemblyAttribute>
 	</ItemGroup>
 

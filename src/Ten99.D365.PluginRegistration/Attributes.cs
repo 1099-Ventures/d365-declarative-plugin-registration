@@ -89,6 +89,9 @@ namespace Ten99.D365.PluginRegistration
 
 		/// <summary>Only needed when the class has two steps for the same message.</summary>
 		public string Key { get; set; }
+
+		/// <summary>Step name. Defaults to "Namespace.Class: Message of entity", as the Plugin Registration Tool names it.</summary>
+		public string Name { get; set; }
 	}
 
 	/// <summary>
