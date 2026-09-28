@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Source-only package: the attribute source compiles into the consuming plugin assembly.
+	     The project also compiles it here, at C# 7.3, to prove it stays .NET Framework compatible. -->
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>7.3</LangVersion>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<IsPackable>true</IsPackable>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<DevelopmentDependency>true</DevelopmentDependency>
+		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+		<!-- No lib folder is intentional -->
+		<NoWarn>$(NoWarn);NU5128</NoWarn>
+
+		<Description>Attributes that declare Dataverse plugin steps and images on the plugin class. Source-only: compiles into your plugin assembly with no runtime dependency. Apply the registrations with Ten99.D365.PluginRegistration.Tool.</Description>
+		<PackageTags>dataverse;dynamics365;d365;plugin;registration;power-platform</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="Attributes.cs"
+			Pack="true"
+			PackagePath="contentFiles/cs/any/Ten99.D365.PluginRegistration/"
+			BuildAction="Compile" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Registration/Registration.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Ten99.D365.PluginRegistration/Ten99.D365.PluginRegistration.csproj" />
+  </Folder>
+</Solution>
