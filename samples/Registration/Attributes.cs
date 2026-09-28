@@ -3,7 +3,7 @@ using System;
 // Draft of the source-only package content. It compiles into the plugin assembly, so it must
 // stay C# 7.3 / .NET Framework compatible and take no dependencies. Everything is internal:
 // the tool matches these attributes by full name, not by assembly identity.
-namespace DeclarativePluginRegistration
+namespace Ten99.D365.PluginRegistration
 {
 	internal enum Stage
 	{

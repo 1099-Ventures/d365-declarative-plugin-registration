@@ -1,4 +1,4 @@
-using DeclarativePluginRegistration;
+using Ten99.D365.PluginRegistration;
 
 // Late-bound project: entity and attribute names come from hand-maintained constants.
 namespace Samples.LateBound

@@ -2,7 +2,7 @@
 
 Register Dataverse plugin steps and images from attributes on the plugin classes themselves, and apply that registration from the command line or a pipeline, on any OS.
 
-> **Status: early design.** The attribute shape is being settled in [`samples/Registration`](samples/Registration). The CLI does not exist yet. Names, including the namespace and package name, may still change.
+> **Status: early design.** The attribute shape is being settled in [`samples/Registration`](samples/Registration). The CLI does not exist yet, and the attributes may still change.
 
 ## Why
 
@@ -46,7 +46,7 @@ The tool rejects declarations that can't work, such as a pre-image on Create, a 
 
 ## How the attributes are shipped
 
-Dataverse runs plugins in a sandbox, and every assembly a plugin references has to be deployed with it. To avoid adding a dependency, the attributes ship as a **source-only** NuGet package. The classes are `internal` and compile into your plugin assembly. The tool matches them by name and never loads your assembly, so it can inspect a .NET Framework plugin assembly from .NET on Linux.
+Dataverse runs plugins in a sandbox, and every assembly a plugin references has to be deployed with it. To avoid adding a dependency, the attributes ship as a **source-only** NuGet package, in the `Ten99.D365.PluginRegistration` namespace. The classes are `internal` and compile into your plugin assembly. The tool matches them by name and never loads your assembly, so it can inspect a .NET Framework plugin assembly from .NET on Linux.
 
 The attribute source targets C# 7.3 so that it builds in classic .NET Framework plugin projects.
 
