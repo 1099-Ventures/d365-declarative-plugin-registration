@@ -125,6 +125,10 @@ dotnet test
 
 The tests run on Microsoft.Testing.Platform. They build a .NET Framework fixture assembly against the real Dataverse SDK and read it back with the tool.
 
+## Releasing
+
+`_pipelines/pipeline-ci.yml` builds and tests every pull request and every push to `main` in Azure DevOps. Pushing a tag `v<semver>` (for example `v0.1.0-alpha.1`) also publishes both packages to nuget.org with that version.
+
 ## Contributing
 
 Contributions are welcome. The project is young, so please open an issue to discuss a change before putting significant work into a pull request.
