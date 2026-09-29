@@ -1,0 +1,93 @@
+# Build, test and publish Ten99.D365.PluginRegistration and Ten99.D365.PluginRegistration.Tool.
+#
+#   Pull requests and main:  build, test and pack (packages kept as a workflow artifact).
+#   Tags v<semver>:          also publish both packages to nuget.org, versioned from the tag
+#                            (v0.1.0-alpha.1 publishes 0.1.0-alpha.1).
+#
+# Publishing uses nuget.org trusted publishing: a short-lived API key is exchanged for this workflow's
+# OIDC token, so no key is stored. It needs a trusted publishing policy on nuget.org for this repository
+# and this workflow file (ci.yml), and the repository variable NUGET_USER set to the nuget.org username.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths-ignore: ['**/*.md', 'LICENSE', '.gitignore']
+  pull_request:
+    branches: [main]
+    paths-ignore: ['**/*.md', 'LICENSE', '.gitignore']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Set version
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+            if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+              echo "::error::Tag $GITHUB_REF_NAME is not v followed by a semantic version."
+              exit 1
+            fi
+            echo "argument=-p:Version=$version" >> "$GITHUB_OUTPUT"
+          else
+            # Not a release: the version from Directory.Build.props, marked with the run number
+            echo "argument=-p:VersionSuffix=ci.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        run: dotnet build -c Release ${{ steps.version.outputs.argument }} -nologo
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack -c Release --no-build ${{ steps.version.outputs.argument }} -o packages -nologo
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: packages/*.nupkg
+          if-no-files-found: error
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: packages
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - name: NuGet login (trusted publishing)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Push to nuget.org
+        run: |
+          for package in packages/*.nupkg; do
+            dotnet nuget push "$package" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+              --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
