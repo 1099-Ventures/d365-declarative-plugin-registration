@@ -127,7 +127,7 @@ The tests run on Microsoft.Testing.Platform. They build a .NET Framework fixture
 
 ## Releasing
 
-`_pipelines/pipeline-ci.yml` builds and tests every pull request and every push to `main` in Azure DevOps. Pushing a tag `v<semver>` (for example `v0.1.0-alpha.1`) also publishes both packages to nuget.org with that version.
+The GitHub Actions workflow `.github/workflows/ci.yml` builds and tests every pull request and every push to `main`. Pushing a tag `v<semver>` (for example `v0.1.0-alpha.1`) also publishes both packages to nuget.org with that version, using nuget.org trusted publishing, so no API key is stored.
 
 ## Contributing
 
